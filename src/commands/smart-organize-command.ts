@@ -71,7 +71,9 @@ export class SmartOrganizeCommand {
         try {
           const domain = new URL(bookmark.url).hostname.replace(/^www\./, '');
           domains.set(domain, (domains.get(domain) || 0) + 1);
-        } catch {}
+        } catch {
+          // TODO: implement - ignore invalid URLs
+        }
       }
     });
 
@@ -249,7 +251,9 @@ ${JSON.stringify(analysisData, null, 2)}
             });
             moveCount++;
           }
-        } catch {}
+        } catch {
+          // TODO: implement - ignore invalid URLs
+        }
       }
     });
 

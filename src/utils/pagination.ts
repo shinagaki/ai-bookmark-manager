@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import * as readline from 'readline';
 
 export class PaginationHelper {
   /**
@@ -22,8 +23,9 @@ export class PaginationHelper {
 
     const totalPages = Math.ceil(items.length / itemsPerPage);
     let currentPage = 1;
+    let shouldContinue = true;
 
-    while (true) {
+    while (shouldContinue) {
       console.clear();
       
       if (title) {
@@ -65,7 +67,7 @@ export class PaginationHelper {
       } else if (input === 'n' && currentPage < totalPages) {
         currentPage++;
       } else if (input === 'q' || input === '') {
-        break;
+        shouldContinue = false;
       } else {
         // 無効な入力の場合は何もしない（再表示）
         await this.waitForInput(chalk.red('無効な入力です。Enterで続行...'));
@@ -155,7 +157,6 @@ export class PaginationHelper {
    */
   private static async waitForInput(prompt: string): Promise<string> {
     return new Promise((resolve) => {
-      const readline = require('readline');
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout

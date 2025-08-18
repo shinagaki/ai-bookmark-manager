@@ -7,6 +7,8 @@ import { BookmarkAnalyzer } from '../analyzers/bookmark-analyzer';
 import { CLIInterface } from '../interactive/cli-interface';
 import { BookmarkOrganizer } from '../organizers/bookmark-organizer';
 import { BookmarkExporter } from '../exporters/bookmark-exporter';
+import { CompleteOrganizeCommand } from './complete-organize-command';
+import inquirer from 'inquirer';
 
 export class InteractiveCommand {
   static async run(): Promise<void> {
@@ -113,7 +115,6 @@ export class InteractiveCommand {
     console.log('='.repeat(30));
     
     // 新しいバッチ処理フローを使用
-    const { CompleteOrganizeCommand } = require('./complete-organize-command');
     await CompleteOrganizeCommand.handleDeadLinks(bookmarks, organizer);
   }
 
@@ -147,7 +148,7 @@ export class InteractiveCommand {
       console.log(`... 他 ${unusedBookmarks.length - 10} 個`);
     }
 
-    const { shouldDelete } = await require('inquirer').prompt([
+    const { shouldDelete } = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'shouldDelete',

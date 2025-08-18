@@ -271,7 +271,9 @@ ${JSON.stringify(sampleBookmarks, null, 2)}
           try {
             const domain = new URL(bookmark.url).hostname;
             domains.set(domain, (domains.get(domain) || 0) + 1);
-          } catch {}
+          } catch {
+            // TODO: implement - ignore invalid URLs
+          }
         }
       });
 

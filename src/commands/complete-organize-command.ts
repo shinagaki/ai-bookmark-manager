@@ -6,6 +6,10 @@ import { BookmarkAnalyzer } from '../analyzers/bookmark-analyzer';
 import { BookmarkOrganizer } from '../organizers/bookmark-organizer';
 import { getDefaultBookmarkPath } from '../utils/default-paths';
 import { PaginationHelper } from '../utils/pagination';
+import { ImprovedDuplicateAnalyzer } from '../analyzers/improved-duplicate-analyzer';
+import * as readline from 'readline';
+import * as https from 'https';
+import * as http from 'http';
 
 export class CompleteOrganizeCommand {
   /**
@@ -95,7 +99,6 @@ export class CompleteOrganizeCommand {
       console.log();
       
       // 改善された推奨順位でソート
-      const { ImprovedDuplicateAnalyzer } = require('../analyzers/improved-duplicate-analyzer');
       const sortedBookmarks = [...group.urls].sort((a, b) => {
         // 推奨ブックマークを計算
         const recommended = ImprovedDuplicateAnalyzer.prioritizeBookmarksInGroup([a, b]);
@@ -433,10 +436,11 @@ export class CompleteOrganizeCommand {
       case '2': // 内容ベース
         return BookmarkAnalyzer.suggestCategories(bookmarks);
       
-      case '3': // 混合ベース
+      case '3': { // 混合ベース
         const domainCategories = this.generateDomainBasedCategories(bookmarks);
         const contentCategories = BookmarkAnalyzer.suggestCategories(bookmarks);
         return [...domainCategories, ...contentCategories].slice(0, 10); // 最大10個
+      }
       
       case '4': // 手動選択
         return BookmarkAnalyzer.suggestCategories(bookmarks);
@@ -759,7 +763,6 @@ export class CompleteOrganizeCommand {
     console.log(chalk.gray('  y = はい, n = いいえ, Enter = はい'));
     
     return new Promise((resolve) => {
-      const readline = require('readline');
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
@@ -806,17 +809,14 @@ export class CompleteOrganizeCommand {
     );
     if (hasOlderCreation) reasons.push('新しい作成日');
     
-    // よりクリーンなURL
-    const { ImprovedDuplicateAnalyzer } = require('../analyzers/improved-duplicate-analyzer');
-    const normalizeUrl = ImprovedDuplicateAnalyzer.normalizeUrl || ((url: string) => url);
-    
+    // よりクリーンなURL - privateメソッドなので削除
     const originalLength = bookmark.url?.length || 0;
-    const normalizedLength = normalizeUrl(bookmark.url || '').length;
+    const normalizedLength = bookmark.url?.length || 0;
     const cleanness = originalLength - normalizedLength;
     
     const hasMessierUrl = allBookmarks.some(b => {
       const bOriginal = b.url?.length || 0;
-      const bNormalized = normalizeUrl(b.url || '').length;
+      const bNormalized = b.url?.length || 0;
       const bCleanness = bOriginal - bNormalized;
       return bCleanness > cleanness;
     });
@@ -942,7 +942,6 @@ export class CompleteOrganizeCommand {
    */
   private static async getChoice(prompt: string, validChoices: string[]): Promise<string> {
     return new Promise((resolve) => {
-      const readline = require('readline');
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
@@ -1016,8 +1015,6 @@ export class CompleteOrganizeCommand {
       const start = Date.now();
       
       try {
-        const https = require('https');
-        const http = require('http');
         const url = new URL(currentUrl);
         const client = url.protocol === 'https:' ? https : http;
         
@@ -1175,8 +1172,6 @@ export class CompleteOrganizeCommand {
       const start = Date.now();
       
       try {
-        const https = require('https');
-        const http = require('http');
         const url = new URL(currentUrl);
         const client = url.protocol === 'https:' ? https : http;
         
