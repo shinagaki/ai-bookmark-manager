@@ -67,5 +67,5 @@ jobs:
     - name: Build
       run: npm run build
     
-    - name: Test platform-specific paths
-      run: npm run test:platform
+    - name: Test
+      run: npm test
