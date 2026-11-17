@@ -55,3 +55,6 @@ lerna-debug.log*
 *.log
 tmp/
 temp/
+# Claude Code（スキルだけ管理し、手元の権限の設定は入れない）
+.claude/*
+!.claude/skills/
